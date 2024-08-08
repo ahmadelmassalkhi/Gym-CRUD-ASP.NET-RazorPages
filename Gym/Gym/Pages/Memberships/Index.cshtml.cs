@@ -2,16 +2,17 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Gym.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Gym.Pages.Memberships
 {
     public class IndexModel : PageModel
     {
         private readonly Gym.Data.GymDbContext _context;
+
         public IndexModel(Gym.Data.GymDbContext context)
         {
             _context = context;
-            IsActive = true;
         }
 
         [BindProperty(SupportsGet = true)]
@@ -21,32 +22,31 @@ namespace Gym.Pages.Memberships
         public string PhoneNumberSearchTerm { get; set; }
 
         [BindProperty(SupportsGet = true)]
-        public bool IsActive { get; set; }
+        public string IsActiveFilter { get; set; }  // Use string to handle "Any", "true", and "false"
 
-
-        public IList<Membership> Memberships { get;set; } = default!;
+        public IList<Membership> Memberships { get; set; } = default!;
 
         public async Task OnGetAsync()
         {
-            Memberships = await _context.Memberships.ToListAsync();
+            var query = _context.Memberships.AsQueryable();
 
             if (!string.IsNullOrEmpty(FullNameSearchTerm))
             {
-                Memberships = Memberships
-                    .Where(m => m.FullName.Contains(FullNameSearchTerm))
-                    .ToList();
+                query = query.Where(m => m.FullName.Contains(FullNameSearchTerm));
             }
 
             if (!string.IsNullOrEmpty(PhoneNumberSearchTerm))
             {
-                Memberships = Memberships
-                    .Where(m => m.PhoneNumber.Contains(PhoneNumberSearchTerm))
-                    .ToList();
+                query = query.Where(m => m.PhoneNumber.Contains(PhoneNumberSearchTerm));
             }
 
-            Memberships = Memberships
-                .Where(m => m.IsActive() == IsActive)
-                .ToList();
+            if (!string.IsNullOrEmpty(IsActiveFilter))
+            {
+                if(IsActiveFilter == "true") query = query.Where(m => m.RegisterDate < m.ExpireDate);
+                else query = query.Where(m => m.RegisterDate >= m.ExpireDate);
+            }
+
+            Memberships = await query.ToListAsync();
         }
     }
 }
