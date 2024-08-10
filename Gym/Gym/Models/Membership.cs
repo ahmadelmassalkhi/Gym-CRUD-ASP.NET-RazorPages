@@ -9,6 +9,7 @@ namespace Gym.Models
         [Required]
         public string FullName { get; set; }
 
+        [Phone]
         public string PhoneNumber { get; set; }
 
         [Required]

@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Gym.Models;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Gym.Pages.Memberships
 {
@@ -18,8 +17,10 @@ namespace Gym.Pages.Memberships
         [BindProperty(SupportsGet = true)]
         public string FullNameSearchTerm { get; set; }
 
+
         [BindProperty(SupportsGet = true)]
         public string PhoneNumberSearchTerm { get; set; }
+
 
         [BindProperty(SupportsGet = true)]
         public string IsActiveFilter { get; set; }  // Use string to handle "Any", "true", and "false"
