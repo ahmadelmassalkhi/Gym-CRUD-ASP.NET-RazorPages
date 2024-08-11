@@ -28,13 +28,13 @@
             @Html.DisplayNameFor(model => model.Membership.RegisterDate)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Membership.RegisterDate)
+            @Model.Membership.RegisterDate.ToString("MM-dd-yyyy")
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Membership.ExpireDate)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Membership.ExpireDate)
+            @Model.Membership.ExpireDate.ToString("MM-dd-yyyy")
         </dd>
     </dl>
     
