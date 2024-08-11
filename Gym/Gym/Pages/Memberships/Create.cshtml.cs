@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Gym.Data;
 using Gym.Models;
 using Gym.Services;
+using System;
+using Gym.Services.Helpers;
 
 namespace Gym.Pages.Memberships
 {
@@ -42,6 +44,12 @@ namespace Gym.Pages.Memberships
              */
 
             if (!ModelState.IsValid) return Page();
+
+            // set popup message
+            TempData["PopupMessage"] = HtmlHelper.WrapInGreenSpan(
+                $"Membership {HtmlHelper.HighlightText(Membership.FullName)} created successfully!"
+            );
+
             await _membershipService.AddMembershipAsync(Membership);
             return RedirectToPage("./Index");
         }

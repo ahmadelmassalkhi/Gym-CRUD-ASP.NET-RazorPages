@@ -3,8 +3,20 @@
 
 @{
     ViewData["Title"] = "Memberships";
+    var popupMessage = TempData["PopupMessage"] as string;
 }
 
+
+<!-- Setting up Popup Message -->
+@if (!string.IsNullOrEmpty(popupMessage))
+{
+    <div id="popupMessage" class="popup-message">
+        @Html.Raw(popupMessage)
+    </div>
+}
+
+
+<!-- Form CSS -->
 <style>
     .active-status {
         font-weight: bold;
@@ -27,6 +39,54 @@
         margin-bottom: 1rem;
     }
 </style>
+
+
+<!-- Popup Message CSS -->
+<style>
+    .popup-message {
+        display: none; /* Hidden by default */
+        position: fixed;
+        top: 10%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #d4edda; /* Light green background */
+        color: #155724; /* Dark green text */
+        padding: 20px 30px; /* More padding for a modern look */
+        border-radius: 10px; /* More rounded corners */
+        z-index: 1000;
+        box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2); /* Soft shadow */
+        opacity: 1;
+        transition: opacity 1s ease-in-out;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern font */
+        font-size: 1rem;
+    }
+
+        .popup-message.show {
+            display: block;
+        }
+
+        .popup-message.hide {
+            opacity: 0;
+        }
+
+    .highlight {
+        color: #000000; /* Bright yellow for highlighting */
+        font-weight: bold;
+    }
+
+    .text-red {
+        color: #dc3545; /* Red color for 'deleted' */
+        font-weight: bold;
+    }
+
+    .text-green {
+        color: #28a745; /* Green color for 'created' */
+        font-weight: bold;
+    }
+</style>
+
+
+
 
 <div class="container">
     <h1 class="mt-4 mb-4">All Memberships (@Model.Memberships.Count())</h1>
@@ -92,6 +152,8 @@
     </table>
 </div>
 
+
+<!-- Form JS-->
 <script>
     function clearForm() {
         document.querySelector('input[name="FullNameSearchTerm"]').value = '';
@@ -99,4 +161,31 @@
         document.querySelector('select[name="IsActiveFilter"]').selectedIndex = 0;
         document.querySelector('form').submit();
     }
+</script>
+
+
+<!-- Popup message JS -->
+<script>
+    function showPopupMessage() {
+        var popup = document.getElementById('popupMessage');
+        if (popup) {
+            popup.classList.add('show');
+
+            // Start fading out after 1.5 seconds
+            setTimeout(function () {
+                popup.classList.add('hide');
+            }, 1500);
+
+            // Completely hide the popup after the fade-out transition
+            setTimeout(function () {
+                popup.classList.remove('show');
+                popup.classList.remove('hide');
+            }, 5000);
+        }
+    }
+
+    // Call the function to show the popup if there's a message
+    window.onload = function () {
+        showPopupMessage();
+    };
 </script>

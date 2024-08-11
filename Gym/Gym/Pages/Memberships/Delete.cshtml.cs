@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Gym.Data;
 using Gym.Models;
+using Gym.Services.Helpers;
 
 namespace Gym.Pages.Memberships
 {
@@ -55,6 +56,11 @@ namespace Gym.Pages.Memberships
                 Membership = membership;
                 _context.Memberships.Remove(Membership);
                 await _context.SaveChangesAsync();
+
+                // set popup message
+                TempData["PopupMessage"] = HtmlHelper.WrapInRedSpan(
+                    $"Membership {HtmlHelper.HighlightText(Membership.FullName)} deleted successfully!"
+                );
             }
 
             return RedirectToPage("./Index");
