@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Gym.Models;
+using Gym.Services.Helpers;
 
 namespace Gym.Pages.Memberships
 {
@@ -48,6 +49,46 @@ namespace Gym.Pages.Memberships
             }
 
             Memberships = await query.ToListAsync();
+        }
+
+
+        public IActionResult OnPostToggleStatus(int id)
+        {
+            Console.WriteLine("HEREEE");
+
+            var membership = _context.Memberships.Find(id);
+            if (membership == null) return NotFound();
+
+            if(!membership.IsActive())
+            {
+                // Activate Membership
+                membership.RegisterDate = DateTime.Now;
+                membership.ExpireDate = DateTime.Now.AddMonths(1);
+            } else
+            {
+                // Deactivate Membership
+                membership.ExpireDate = DateTime.Now;
+            }
+
+            // Save changes to database
+            _context.SaveChanges();
+
+            // Prepare popup message
+            if(membership.IsActive())
+            {
+                TempData["PopupMessage"] = HtmlHelper.WrapInGreenSpan(
+                    $"Membership {HtmlHelper.HighlightText(membership.FullName)} activated successfully!"
+                );
+            }
+            else
+            {
+                TempData["PopupMessage"] = HtmlHelper.WrapInRedSpan(
+                    $"Membership {HtmlHelper.HighlightText(membership.FullName)} deactivated successfully!"
+                );
+            }
+
+            // return to page
+            return RedirectToPage();
         }
     }
 }

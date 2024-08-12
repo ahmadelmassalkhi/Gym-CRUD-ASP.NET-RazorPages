@@ -7,7 +7,7 @@
 }
 
 
-<!-- Setting up Popup Message -->
+<!-- CSS for Setting up Popup Message -->
 @if (!string.IsNullOrEmpty(popupMessage))
 {
     <div id="popupMessage" class="popup-message">
@@ -16,14 +16,21 @@
 }
 
 
-<!-- Form CSS -->
+<!-- CSS for Form -->
 <style>
     .active-status {
         font-weight: bold;
         font-style: italic;
         padding: 0.5rem;
         border-radius: 0.25rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+        cursor: pointer; /* Indicate that it's clickable */
     }
+
+        .active-status:hover {
+            transform: scale(1.1); /* Slightly increase the size */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow */
+        }
 
     .bg-light-green {
         background-color: #d4edda; /* Bootstrap's light green background color */
@@ -41,7 +48,7 @@
 </style>
 
 
-<!-- Popup Message CSS -->
+<!-- CSS for Popup Message -->
 <style>
     .popup-message {
         display: none; /* Hidden by default */
@@ -137,9 +144,12 @@
                     <td> @membership.RegisterDate.ToString("MM-dd-yyyy") </td>
                     <td> @membership.ExpireDate.ToString("MM-dd-yyyy") </td>
                     <td>
-                        <div class="active-status @(membership.IsActive() ? "bg-light-green" : "bg-light-red") text-center">
-                            @(membership.IsActive() ? "Active" : "Inactive")
-                        </div>
+                        <form method="post" asp-page-handler="ToggleStatus" asp-route-id="@membership.Id" style="display:inline;" id="form-@membership.Id">
+                            <div class="active-status @(membership.IsActive() ? "bg-light-green" : "bg-light-red") text-center"
+                                 onclick="confirmAndSubmit(@membership.Id, '@membership.IsActive()'=='True');">
+                                @(membership.IsActive() ? "Active" : "Inactive")
+                            </div>
+                        </form>
                     </td>
                     <td>
                         <a class="btn btn-sm btn-warning" asp-page="./Edit" asp-route-id="@membership.Id">Edit</a>
@@ -153,7 +163,7 @@
 </div>
 
 
-<!-- Form JS-->
+<!-- JavaScript for Form -->
 <script>
     function clearForm() {
         document.querySelector('input[name="FullNameSearchTerm"]').value = '';
@@ -164,7 +174,7 @@
 </script>
 
 
-<!-- Popup message JS -->
+<!-- JavaScript for Popup message -->
 <script>
     function showPopupMessage() {
         var popup = document.getElementById('popupMessage');
@@ -188,4 +198,17 @@
     window.onload = function () {
         showPopupMessage();
     };
+</script>
+
+
+<!-- JavaScript for activation/deactivation button -->
+<script>
+    function confirmAndSubmit(id, isActive) {
+        var action = isActive ? "deactivate" : "activate";
+        var message = `Are you sure you want to ${action} this membership?`;
+        if (confirm(message)) {
+            // Submit the form
+            document.getElementById(`form-${id}`).submit();
+        }
+    }
 </script>
