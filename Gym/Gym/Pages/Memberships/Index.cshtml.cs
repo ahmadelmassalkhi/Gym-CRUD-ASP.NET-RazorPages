@@ -44,8 +44,8 @@ namespace Gym.Pages.Memberships
 
             if (!string.IsNullOrEmpty(IsActiveFilter))
             {
-                if(IsActiveFilter == "true") query = query.Where(m => m.RegisterDate < m.ExpireDate);
-                else query = query.Where(m => m.RegisterDate >= m.ExpireDate);
+                if(IsActiveFilter == "true") query = query.Where(m => DateTime.Now < m.ExpireDate);
+                else query = query.Where(m => DateTime.Now >= m.ExpireDate);
             }
 
             Memberships = await query.ToListAsync();
